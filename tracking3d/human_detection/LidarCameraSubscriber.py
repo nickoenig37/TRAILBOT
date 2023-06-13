@@ -36,12 +36,11 @@ rotation_matrix = """
 """
 translation_vector = np.array([-0.06024059837, -0.08180891509, -0.3117851288])
 
-
 #globals 
 parser_args = tuple()
 model = None 
 debug_mode = False
-
+publishing_frequency = 0.5 #Hz 
 
 def parse_arguments():
     """
@@ -238,13 +237,18 @@ class LidarCameraSubscriber(Node):
             PoseStamped,
             'target_location', 
             10)
+        self.timestamp = 0
+        #run the publish_message function according to publishing_frequency
+        self.create_timer(1/publishing_frequency, self.publish_message)
 
     def camera_callback(self, msg):
         cv_image = self.bridge.imgmsg_to_cv2(
             msg, desired_encoding='passthrough')
         self.is_there_anyone = process_frame(cv_image,self.person_array)
-        if self.is_there_anyone:
-            self.publish_message("camera",msg.header.stamp)
+        self.timestamp = msg.header.stamp
+
+        if not publishing_frequency>0:
+            self.publish_message("camera")
 
     def lidar_callback(self, msg):
         if not self.is_there_anyone:
@@ -265,10 +269,15 @@ class LidarCameraSubscriber(Node):
                 person.z = -1.0
             else:
                 person.z = estimate_depth(person.x, person.y, points2d)
+        self.timestamp = msg.header.stamp
+        if not publishing_frequency>0:
+            self.publish_message("lidar")
 
-        self.publish_message("lidar",msg.header.stamp)
+    def publish_message(self,source_str="timer"):
+        """ publish message is somebody is detected"""
+        if not self.is_there_anyone:
+            return
 
-    def publish_message(self,source_str, timestamp):
         #person0 for debugging purpse
         person0 = self.person_array[0]
         message = f"{source_str:<7}"
@@ -287,7 +296,7 @@ class LidarCameraSubscriber(Node):
         # self.angle_publisher.publish(angle_msg)
 
         pose_stamped_msg = PoseStamped()
-        pose_stamped_msg.header.stamp = timestamp
+        pose_stamped_msg.header.stamp = self.timestamp
         pose_stamped_msg.header.frame_id = "velodyne"
 
         lidar_x,lidar_y,lidar_z = convert_to_lidar_frame((person0.x,person0.y,person0.z))
