@@ -38,14 +38,14 @@ class CircleMarkerNode(Node):
         marker.pose.orientation.y = 0.0
         marker.pose.orientation.z = 0.0
         marker.pose.orientation.w = 1.0
-        marker.scale.x = 1.0  # Diameter of the circle
-        marker.scale.y = 1.0  # Diameter of the circle
-        marker.scale.z = 0.01  # Height of the cylinder (thickness of the circle)
+        marker.scale.x = 0.5  # Diameter of the circle
+        marker.scale.y = 0.5  # Diameter of the circle
+        marker.scale.z = 0.1  # Height of the cylinder (thickness of the circle)
         marker.color = ColorRGBA()
         marker.color.r = 1.0  # Red color
         marker.color.g = 0.0
         marker.color.b = 0.0
-        marker.color.a = 0.5  # Semi-transparent
+        marker.color.a = 0.4  # Semi-transparent
 
         return marker
 
