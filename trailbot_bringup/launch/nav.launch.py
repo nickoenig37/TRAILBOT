@@ -1,3 +1,4 @@
+#This file is to launch the nav and needed dependencies for the trailbot
 import os
 from ament_index_python.packages import get_package_share_directory
 
@@ -17,7 +18,7 @@ def generate_launch_description():
 
 
     #the cartographer and nav configs 
-    package_name = 'husky_base'
+    package_name = 'nav'
 
     # Nav node
     nav_launch_path = os.path.join(get_package_share_directory(package_name),'launch','navigation_launch.py')
