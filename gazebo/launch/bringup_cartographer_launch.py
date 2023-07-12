@@ -140,6 +140,14 @@ def generate_launch_description():
             output='screen'
         ),
 
+        #goal pose marker
+        Node(
+            package='circle_marker',
+            executable='circle_marker_node',
+            name='circle_marker_node',
+            output='screen'
+        ),
+
         #pointcloud to laserscan conversion node
         Node(
             package='pointcloud_to_laserscan_converter', executable='pointcloud_to_laserscan_node',
